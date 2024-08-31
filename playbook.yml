@@ -101,9 +101,20 @@
     dest: /usr/local/bin/docker-compose
     mode: 'u+x,g+x'
 
-- name: Start container using docker-compose
-  host: all
-  become: true
-  shell: docker-compose up -d
-  args:
-    chdir: ./docker-compose.yml
+  - name: Start container using docker-compose
+    host: all
+    become: true
+    shell: docker-compose up -d
+    args:
+      chdir: ./docker-compose.yml
+
+- name: Import Grafana dashboard node-exporter
+  community.grafana.grafana_dashboard:
+      grafana_url: http://localhost:3000
+      grafana_user: "admin"
+      grafana_password: "admin"
+      dashboard_url: https://grafana.com/api/dashboards/1860/revisions/36/download
+      state: present
+- name: Add data source to grafana
+  shell: |
+    curl -X POST -H "Content-Type: application/json" -d '{"name":"Prometheus", "type":"prometheus", "url":"http://prometheus:9090", "access":"proxy", "isDefault":true}' -u admin:admin http://localhost:3000/api/datasources
