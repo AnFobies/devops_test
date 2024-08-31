@@ -13,6 +13,6 @@
 2. Виртуальная машина должна подниматься с помощью команды `vagrant up`. +
 3. Используйте [Ansible](https://www.ansible.com/) для провижионинга и настройки виртуальной машины. +
 4. Настройте автозапуск [node_exporter](https://github.com/prometheus/node_exporter) на виртуальной машине. +
-5. Установите и настройте [Grafana](https://grafana.com/) и [Prometheus](https://prometheus.io/) в контейнерах [Docker](https://docs.docker.com/) с помощью [Ansible](https://www.ansible.com/) и [docker-compose](https://docs.docker.com/compose/).
-6. Настройте [Prometheus](https://prometheus.io/) для сбора метрик от [node_exporter](https://github.com/prometheus/node_exporter) и добавьте его в конфигурацию [Prometheus](https://prometheus.io/).
-7. Добавьте автоматическое создание dashboard [Node Exporter Full](https://grafana.com/grafana/dashboards/1860-node-exporter-full/) в [Grafana](https://grafana.com/) для отображения основных метрик виртуальной машины.
+5. Установите и настройте [Grafana](https://grafana.com/) и [Prometheus](https://prometheus.io/) в контейнерах [Docker](https://docs.docker.com/) с помощью [Ansible](https://www.ansible.com/) и [docker-compose](https://docs.docker.com/compose/). +
+6. Настройте [Prometheus](https://prometheus.io/) для сбора метрик от [node_exporter](https://github.com/prometheus/node_exporter) и добавьте его в конфигурацию [Prometheus](https://prometheus.io/). +
+7. Добавьте автоматическое создание dashboard [Node Exporter Full](https://grafana.com/grafana/dashboards/1860-node-exporter-full/) в [Grafana](https://grafana.com/) для отображения основных метрик виртуальной машины. 
