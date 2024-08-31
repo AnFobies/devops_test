@@ -1,0 +1,103 @@
+---
+- name: Deploy Node Exporter
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Create Node Exporter user
+      user:
+        name: node_exporter
+        system: yes
+        shell: /bin/false
+
+    - name: Download and extract Node Exporter
+      get_url:
+        url: "https://github.com/prometheus/node_exporter/releases/download/v2.2.1/node_exporter-2.2.1.linux-amd64.tar.gz"
+        dest: "/tmp/node_exporter.tar.gz"
+
+    - name: Extract Node Exporter
+      ansible.builtin.unarchive:
+        src: "/tmp/node_exporter.tar.gz"
+        dest: "/opt/"
+
+    - name: Set permissions and ownership
+      file:
+        path: "/opt/node_exporter-2.2.1.linux-amd64/node_exporter"
+        mode: "0755"
+        owner: "node_exporter"
+        group: "node_exporter"
+
+    - name: Create Node Exporter systemd service
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+        daemon_reload: yes
+        daemon_reexec: yes
+        scope: user
+        user: node_exporter
+        exec_start: "/opt/node_exporter-2.2.1.linux-amd64/node_exporter"
+
+- name: Install Docker and Docker Compose
+  hosts: all
+  become: yes
+  gather_facts: false
+  tasks:
+  - name: Install docker packages
+    remote_user: ansible_ubuntu_demo
+    apt:
+      name: name: ['apt-transport-https','ca-certificates', 'curl', 'software-properties-common']
+      state: present
+      update_cache: yes
+    tags:
+      - docker
+
+  - name: Add Docker s GPG key for ubuntu from official site
+  remote_user: ansible_ubuntu_demo
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  tags:
+    - docker
+
+  - name: Configure Docker for ubuntu stable repository
+  remote_user: ansible_ubuntu_demo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+    state: present
+    update_cache: yes
+  tags:
+    - docker
+
+  - name: Update apt packages
+  remote_user: ansible_ubuntu_demo
+  apt:
+    update_cache: yes
+  tags:
+    - docker
+
+  - name: Install docker-ce
+  remote_user: ansible_ubuntu_demo
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+  tags:
+    - docker
+
+  - name: Add "ansible_ubuntu_demo" user to "docker" group
+  remote_user: ansible_ubuntu_demo
+  user:
+    name: "ansible_ubuntu_demo"
+    group: "docker"
+    append: yes
+  tags:
+    - docker
+
+  - name: Install docker-compose from official github repo
+  remote_user: ansible_ubuntu_demo
+  get_url:
+    url : https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 'u+x,g+x'
+
